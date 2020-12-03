@@ -3,7 +3,8 @@
 // EXTERNAL FILE
 include_once('src/help.php'); // HELP FUNCTION
 include_once('src/my_scandir.php'); // CUSTOM SCANDIR (RECURSIVE OPTION)
-include_once('src/my_merge_image.php'); // MERGE IMAGES
+include_once('src/images_gen.php'); // MERGE IMAGES
+include_once('src/misc.php'); // OTHER SCRIPTS
 
 // GLOBAL VAR
 $folder = end($argv);

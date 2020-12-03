@@ -4,6 +4,7 @@ function my_merge_image(array $scan, int $padding, string $overrideSize, string 
 {
     $scan = mergeIntoSingle($scan); // Merge all array into single one
 
+    dd($scan);
     $images = [];
     foreach ($scan as $file) { // Create array with only images in png
         if (is_file($file) && exif_imagetype($file) === IMAGETYPE_PNG) {
@@ -59,20 +60,4 @@ function my_merge_image(array $scan, int $padding, string $overrideSize, string 
 
     // create the sprite image with name passed in parameter
     imagepng($spriteImg, $name);
-}
-
-function mergeIntoSingle(array $array)
-{
-    $single = [];
-
-    foreach ($array as $item) {
-        if (is_array($item)) {
-            $single = array_merge($single, mergeIntoSingle($item));
-
-        } else {
-            $single[] = $item;
-        }
-    }
-
-    return $single;
 }
