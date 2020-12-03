@@ -1,6 +1,6 @@
 <?php
 
-function my_merge_image($scan, $name)
+function my_merge_image(array $scan, int $padding, string $overrideSize, string $name)
 {
     $scan = mergeIntoSingle($scan); // Merge all array into single one
 
@@ -12,18 +12,17 @@ function my_merge_image($scan, $name)
     }
 
     // default value
-    $width = 0;
-    $height = 0;
     $pos = 0;
     $tmpFile = [];
     $totalWidth = 0;
     $biggestHeight = 0;
 
     foreach ($images as $image) {
-        $infos = getimagesize($image);
-        if (isset($infos)) {
-            // get image size
-            list($width, $height) = $infos;
+        // get image size
+        if ($overrideSize !== '') {
+            list($width, $height) = explode("x", $overrideSize);
+        } else {
+            list($width, $height) = getimagesize($image);
         }
 
         // put image and size into array
@@ -33,7 +32,7 @@ function my_merge_image($scan, $name)
         ];
 
         // get total width (for sprite image)
-        $totalWidth += $width;
+        $totalWidth += $padding + $width;
         // get biggest height (for sprite image)
         $biggestHeight = max($tmpFile)['height'];
     }
@@ -54,7 +53,7 @@ function my_merge_image($scan, $name)
         imagecopy($spriteImg, $tempImg, $pos, 0, 0, 0, $size['width'], $size['height']);
 
         // spacing images
-        $pos += $size['width'];
+        $pos += $padding + $size['width'];
         imagedestroy($tempImg);
     }
 

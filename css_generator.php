@@ -13,11 +13,15 @@ $shortopts = "h";  // help (bool)
 $shortopts .= "r"; // recursive (bool)
 $shortopts .= "i:"; // output-image (parameter required)
 $shortopts .= "s:"; // output-style (parameter required)
+$shortopts .= "p:"; // padding (parameter required)
+$shortopts .= "o:"; // override size (parameter required)
 $longopts = [
     "help",
     "recursive",
     "output-image:",
-    "output-style:"
+    "output-style:",
+    "padding:",
+    "override-size:"
 ];
 $options = getopt($shortopts, $longopts);
 // dump($options);
@@ -45,7 +49,12 @@ if (isset($options['recursive']) || isset($options['r'])) {
 
 // OUTPUT IMAGE NAME
 if (isset($options['output-image']) || isset($options['i'])) {
-    $imageName = $options['output-image'] ?? $options['i'];
+    $imageName = ($options['output-image'] ?? $options['i']) . '.png';
+
+    if (! is_string($imageName)) {
+        echo "The name format is incorrect!" . PHP_EOL . PHP_EOL;
+        help();
+    }
 } else {
     $imageName = "sprite.png";
 }
@@ -53,15 +62,45 @@ if (isset($options['output-image']) || isset($options['i'])) {
 
 // OUTPUT CSS NAME
 if (isset($options['output-style']) || isset($options['s'])) {
-    $styleName = $options['output-style'] ?? $options['s'];
+    $styleName = ($options['output-style'] ?? $options['s']) . '.css';
+
+    if (! is_string($styleName)) {
+        echo "The name format is incorrect!" . PHP_EOL . PHP_EOL;
+        help();
+    }
 } else {
     $styleName = "style.css";
 }
-//dump($styleName);
+
+// BONUS PADDING
+if (isset($options['padding']) || isset($options['p'])) {
+    $padding = $options['padding'] ?? $options['p'];
+
+    if (! is_numeric($padding)) {
+        echo "The padding format is incorrect!" . PHP_EOL . PHP_EOL;
+        help();
+    }
+} else {
+    $padding = 0;
+}
+
+// BONUS OVERRIDE SIZE
+if (isset($options['override-size']) || isset($options['o'])) {
+    $overrideSize = $options['override-size'] ?? $options['o'];
+
+    // Check if size is correct format
+    $split = explode("x", $overrideSize);
+    if (empty($split[0]) || empty($split[1]) || (is_numeric($split[0]) === false || is_numeric($split[1]) === false)) {
+        echo "Le format de override size est incorrect !" . PHP_EOL . PHP_EOL;
+        help();
+    }
+} else {
+    $overrideSize = '';
+}
 
 echo "Génération de l'image..." . PHP_EOL;
 
 // MERGE IMAGES
-my_merge_image($scan, $imageName);
+my_merge_image($scan, $padding, $overrideSize, $imageName);
 
 echo "Image générée sous le nom de \"$imageName\"." . PHP_EOL;
