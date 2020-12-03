@@ -2,7 +2,7 @@
 
 function my_scandir($dir, $is_rec = false) {
     if (is_dir($dir)) {
-        if ($dir[mb_strlen($dir) - 1] !== DIRECTORY_SEPARATOR) {
+        if ($dir[mb_strlen($dir) - 1] !== DIRECTORY_SEPARATOR) { // Slash separator
             $dir .= DIRECTORY_SEPARATOR;
         }
 

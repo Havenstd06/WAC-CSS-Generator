@@ -2,31 +2,70 @@
 
 function my_merge_image($scan, $name)
 {
-    $scan = nestedToSingle($scan); // Merge all array into single
-//    dump($scan);
+    $scan = mergeIntoSingle($scan); // Merge all array into single one
 
-    foreach ($scan as $key => $file) {
-        if (is_file($file)) {
-            if (exif_imagetype($file) === IMAGETYPE_PNG){
-
-            }
+    $images = [];
+    foreach ($scan as $file) { // Create array with only images in png
+        if (is_file($file) && exif_imagetype($file) === IMAGETYPE_PNG) {
+            $images[] = $file;
         }
     }
+
+    $width = 0;
+    $height = 0;
+    $pos = 0;
+    $tmpFile = [];
+    $totalWidth = 0;
+    $biggestHeight = 0;
+
+    foreach ($images as $image) {
+        $infos = getimagesize($image);
+        if (isset($infos)) {
+            list($width, $height) = $infos;
+        }
+
+        $tmpFile[$image] = [
+            "width" => $width,
+            "height" => $height
+        ];
+//
+//        dump($tmpFile);
+
+        $totalWidth += $width;
+        $biggestHeight = max($tmpFile)['height'];
+    }
+
+    // create empty image
+    $spriteImg = imagecreatetruecolor($totalWidth, $biggestHeight);
+    $background = imagecolorallocatealpha($spriteImg, 255, 255, 255, 127);
+    imagefill($spriteImg, 0, 0, $background);
+    imagealphablending($spriteImg, false);
+    imagesavealpha($spriteImg, true);
+
+    foreach ($tmpFile as $image => $size) {
+        $tempImg = imagecreatefrompng($image);
+        imagecopy($spriteImg, $tempImg, $pos, 0, 0, 0, $size['width'], $size['height']);
+
+        $pos += $size['width'];
+        imagedestroy($tempImg);
+    }
+
+    imagepng($spriteImg, $name);
+
 }
 
-function nestedToSingle(array $array)
+function mergeIntoSingle(array $array)
 {
-    $singleDimArray = [];
+    $single = [];
 
     foreach ($array as $item) {
-
         if (is_array($item)) {
-            $singleDimArray = array_merge($singleDimArray, nestedToSingle($item));
+            $single = array_merge($single, mergeIntoSingle($item));
 
         } else {
-            $singleDimArray[] = $item;
+            $single[] = $item;
         }
     }
 
-    return $singleDimArray;
+    return $single;
 }

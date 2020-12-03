@@ -1,9 +1,9 @@
 <?php
 
 // EXTERNAL FILE
-include_once('src/help.php');
-include_once('src/my_scandir.php');
-include_once('src/my_merge_image.php');
+include_once('src/help.php'); // HELP FUNCTION
+include_once('src/my_scandir.php'); // CUSTOM SCANDIR (RECURSIVE OPTION)
+include_once('src/my_merge_image.php'); // MERGE IMAGES
 
 // GLOBAL VAR
 $folder = end($argv);
@@ -23,7 +23,8 @@ $options = getopt($shortopts, $longopts);
 // dump($options);
 // dd($argc);
 
-if ((isset($options['help']) || isset($options['h'])) || $argc === 1) { // If user call help (--help || -h) or if no more than 1 args
+// If user call help (--help || -h) or if no more than 1 args
+if ((isset($options['help']) || isset($options['h'])) || $argc === 1) {
     help();
 }
 
@@ -34,7 +35,7 @@ if (! file_exists($folder)) { // if folder does not exist message + help
     exit(1);
 }
 
-// LIST OF FILE (USING my_scandir)
+// LIST OF FILE
 if (isset($options['recursive']) || isset($options['r'])) {
     $scan = my_scandir($folder, true);
 } else {
@@ -58,4 +59,9 @@ if (isset($options['output-style']) || isset($options['s'])) {
 }
 //dump($styleName);
 
+echo "Génération de l'image..." . PHP_EOL;
+
+// MERGE IMAGES
 my_merge_image($scan, $imageName);
+
+echo "Image générée sous le nom de \"$imageName\"." . PHP_EOL;
