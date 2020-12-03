@@ -34,7 +34,7 @@ if ((isset($options['help']) || isset($options['h'])) || $argc === 1) {
 
 // FOLDER CHECKER
 if (! file_exists($folder)) { // if folder does not exist message + help
-    echo "Le dossier \"$folder\" n'existe pas !" . PHP_EOL . PHP_EOL;
+    echo "\"$folder\" does not exist!" . PHP_EOL . PHP_EOL;
     help();
     exit(1);
 }
@@ -91,16 +91,16 @@ if (isset($options['override-size']) || isset($options['o'])) {
     // Check if size is correct format
     $split = explode("x", $overrideSize);
     if (empty($split[0]) || empty($split[1]) || (is_numeric($split[0]) === false || is_numeric($split[1]) === false)) {
-        echo "Le format de override size est incorrect !" . PHP_EOL . PHP_EOL;
+        echo "The override size format is incorrect!" . PHP_EOL . PHP_EOL;
         help();
     }
 } else {
     $overrideSize = '';
 }
 
-echo "Génération de l'image..." . PHP_EOL;
+echo "Generation of the image..." . PHP_EOL;
 
 // MERGE IMAGES
 my_merge_image($scan, $padding, $overrideSize, $imageName);
 
-echo "Image générée sous le nom de \"$imageName\"." . PHP_EOL;
+echo "Image generated as \"$imageName\"." . PHP_EOL;
